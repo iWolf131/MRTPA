@@ -1,0 +1,15 @@
+name: MRTPA
+main: me.wolf_131.mrtpa.Main
+version: 1.0
+author: Wolf_131
+commands:
+  tpa:
+    aliases: [tp]
+  tpaceitar:
+    aliases: [tpaccept]
+  tpnegar:
+    aliases: [tpdeny]
+  tptoggle:
+  tpo:
+  tpaqui:
+    aliases: [tphere]
