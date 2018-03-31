@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Commands implements CommandExecutor {
 
@@ -88,31 +89,53 @@ public class Commands implements CommandExecutor {
 									enviou.teleport(p.getLocation());
 									enviou.sendMessage("§eVocê foi teleportado para o jogador " + p.getName() + ".");
 									plugin.sendTitle(enviou, "§6Teleportado", "§fpara " + p.getName() + ".");
+									plugin.sendActionBar(p, "§a▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉");
 									plugin.teleportando.remove(enviou.getName());
 								}
 							}
-						}, (long)(20*9)); 
+						}, (long)(20*10)); 
 						Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 							int cool = 3;
 							public void run() {
 								if(plugin.teleportando.contains(enviou.getName()) && 0 < cool) {
-									enviou.sendMessage("§eTeleportando em " + cool + " segundos.");
-									p.sendMessage("§eO jogador " + enviou.getName() + " irá teleportar-se até si em " + cool + " segundos.");
 									if(cool != 1) {
 										plugin.sendTitle(enviou, "§6Teleportando", "§fem " + cool + " segundos!");
-										if(cool == 3)
-											plugin.sendActionBar(p, "§a▉▉▉▉▉§c▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉");
-										 else
-											plugin.sendActionBar(p, "§a▉▉▉▉▉▉▉▉▉▉▉▉§c▉▉▉▉▉▉▉▉");
+										enviou.sendMessage("§eTeleportando em " + cool + " segundos.");
+										p.sendMessage("§eO jogador " + enviou.getName() + " irá teleportar-se até si em " + cool + " segundos.");
 									} else {
-										plugin.sendTitle(enviou, "§6Teleportando", "§fem " + cool + " segundo!");
-										plugin.sendActionBar(p, "§a▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉");
+										enviou.sendMessage("§eTeleportando em 1 segundo.");
+										p.sendMessage("§eO jogador " + enviou.getName() + " irá teleportar-se até si em 1 segundo.");
+										plugin.sendTitle(enviou, "§6Teleportando", "§fem 1 segundo!");
 									}
 									cool--;
 								} else
 								Bukkit.getScheduler().cancelTask(420);
 							}
 						}, 20L, 20L*3);
+						
+						new BukkitRunnable(){
+							int vermelho = 20;
+							int verde = 0;
+							String verde_cor = "§a▉";
+							String vermelho_cor = "§c▉";
+							public void run() {
+								if(plugin.teleportando.contains(enviou.getName()) 
+										&& 0 <= vermelho
+										&& verde <= 20) {
+									vermelho--;
+									verde++;
+									StringBuilder stg_verm = new StringBuilder();
+									StringBuilder stg_verd = new StringBuilder();
+									for(int verm = 0; verm <= vermelho; verm++)
+										stg_verm.append(vermelho_cor);
+									for(int verd = 0; verd <= verde; verd++)
+										stg_verd.append(verde_cor);
+									plugin.sendActionBar(enviou, stg_verd.toString() + stg_verm.toString());
+								} else
+								cancel();
+							}
+				               
+						}.runTaskTimerAsynchronously(plugin, 5L, 10L);
 						
 						} else {
 							enviou.teleport(p.getLocation());
