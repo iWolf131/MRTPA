@@ -36,11 +36,18 @@ public class Commands implements CommandExecutor {
 							p.sendMessage("§cVocê não pode enviar pedidos de teleporte para esse jogador, pois ele está com teleporte desativado!");
 							return true;
 						}
+						if(p == target) {
+							p.sendMessage("§cVocê não pode enviar pedidos de teleporte para si mesmo!");
+							return true;
+						}
 						p.sendMessage("§ePedido de teleporte enviado para o jogador §6" + target.getName() + "§e.");
 						target.sendMessage("§eO jogador §6" + p.getName() + " §edeseja se teleportar até você.");
 						plugin.sendJSONMsg(target, "§eClique ", "§a§lAQUI", " §epara aceitar.", "§aClique aqui para aceitar!" , "/tpaceitar " + target.getName());
 						plugin.sendJSONMsg(target, "§eClique ", "§c§lAQUI", " §epara negar.", "§cClique aqui para negar!" , "/tpnegar " + target.getName());
-						plugin.cooldown.put(p.getName(), System.currentTimeMillis());
+						
+						if(!p.hasPermission("mrtpa.cooldown"))
+							plugin.cooldown.put(p.getName(), System.currentTimeMillis());
+						
 						plugin.teleporte_pendente.add(target.getName());
 						plugin.teleporte_expirar.add(target.getName());
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
@@ -81,7 +88,7 @@ public class Commands implements CommandExecutor {
 						plugin.teleporte_expirar.remove(p.getName());
 						plugin.teleportando.add(enviou.getName());
 						plugin.teleporte_pendente.remove(p.getName());
-						if(enviou.hasPermission("mrtpa.bypass")) {
+						if(!enviou.hasPermission("mrtpa.bypass")) {
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 							@Override
 							public void run() {
