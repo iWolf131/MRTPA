@@ -1,5 +1,7 @@
 package me.wolf_131.mrtpa;
 
+import java.util.concurrent.TimeUnit;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,7 +29,7 @@ public class Commands implements CommandExecutor {
 			if(args.length == 1) {
 				Player target = Bukkit.getPlayerExact(args[0]);
 				if(target != null) {
-					if(!plugin.cooldown.containsKey(p.getName())) {
+					if(!plugin.msgCooldown(p)) {
 						if(plugin.tptoggle.contains(p.getName())) {
 							p.sendMessage("§cVocê não pode enviar pedidos de teleporte! Use /tptoggle.");
 							return true;
@@ -46,7 +48,7 @@ public class Commands implements CommandExecutor {
 						plugin.sendJSONMsg(target, "§eClique ", "§c§lAQUI", " §epara negar.", "§cClique aqui para negar!" , "/tpnegar " + target.getName());
 						
 						if(!p.hasPermission("mrtpa.cooldown"))
-							plugin.cooldown.put(p.getName(), System.currentTimeMillis());
+							plugin.cooldown.put(p.getName(), System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15));
 						
 						plugin.teleporte_pendente.add(target.getName());
 						plugin.teleporte_expirar.add(target.getName());
@@ -68,8 +70,7 @@ public class Commands implements CommandExecutor {
 				        	}
 				        }, (long) (15 * 20L));
 						return true;
-					} else
-						plugin.msgCooldown(p);
+					}
 				} else {
 					p.sendMessage("§cO jogador " + args[0] + " não está online!");
 					return true;
