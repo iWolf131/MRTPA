@@ -44,18 +44,18 @@ public class Commands implements CommandExecutor {
 						}
 						p.sendMessage("§ePedido de teleporte enviado para o jogador §6" + target.getName() + "§e.");
 						target.sendMessage("§eO jogador §6" + p.getName() + " §edeseja se teleportar até você.");
-						plugin.sendJSONMsg(target, "§eClique ", "§a§lAQUI", " §epara aceitar.", "§aClique aqui para aceitar!" , "/tpaceitar " + target.getName());
-						plugin.sendJSONMsg(target, "§eClique ", "§c§lAQUI", " §epara negar.", "§cClique aqui para negar!" , "/tpnegar " + target.getName());
+						plugin.sendJSONMsg(target, "§eClique ", "§a§lAQUI", " §epara aceitar.", "§aClique aqui para aceitar!" , "/tpaceitar " + p.getName());
+						plugin.sendJSONMsg(target, "§eClique ", "§c§lAQUI", " §epara negar.", "§cClique aqui para negar!" , "/tpnegar " + p.getName());
 						
-						if(!p.hasPermission("mrtpa.cooldown"))
+						//if(!p.hasPermission("mrtpa.cooldown"))
 							plugin.cooldown.put(p.getName(), System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15));
 						
-						plugin.teleporte_pendente.add(target.getName());
-						plugin.teleporte_expirar.add(target.getName());
+						plugin.teleporte_pendente.put(p.getName(), target.getName());
+						plugin.teleporte_expirar.put(p.getName(), target.getName());
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 							@Override
 							public void run() {
-								if(plugin.teleporte_expirar.contains(target.getName())) {
+								if(!plugin.teleporte_expirar.isEmpty()) {
 									p.sendMessage("§cO seu pedido de teleporte expirou.");
 									target.sendMessage("§cO pedido de teleporte do jogador " + p.getName() + " expirou.");
 									plugin.teleporte_expirar.remove(target.getName());
@@ -78,11 +78,11 @@ public class Commands implements CommandExecutor {
 			if(args.length == 1) {
 				Player enviou = Bukkit.getPlayerExact(args[0]);
 				if(enviou != null) {
-					if(plugin.teleporte_pendente.contains(p.getName()) && plugin.teleporte_expirar.contains(p.getName())) {
+					if(plugin.teleporte_pendente.containsValue(p.getName()) && plugin.teleporte_expirar.containsValue(p.getName())) {
 						plugin.teleporte_expirar.remove(p.getName());
 						plugin.teleportando.add(enviou.getName());
 						plugin.teleporte_pendente.remove(p.getName());
-						if(!enviou.hasPermission("mrtpa.bypass")) {
+						//if(!enviou.hasPermission("mrtpa.bypass")) {
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 							@Override
 							public void run() {
@@ -90,9 +90,10 @@ public class Commands implements CommandExecutor {
 									enviou.teleport(p.getLocation());
 									enviou.sendMessage("§eVocê foi teleportado para o jogador " + p.getName() + ".");
 									plugin.sendTitle(enviou, "§6Teleportado", "§fpara " + p.getName() + ".");
-									plugin.sendActionBar(p, "§a▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉");
+									plugin.sendActionBar(enviou, "§a▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉");
 									plugin.teleportando.remove(enviou.getName());
-								}
+								} else
+									p.sendMessage("§cO teleporte foi cancelado!");
 							}
 						}, (long)(20*10)); 
 						Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -109,8 +110,9 @@ public class Commands implements CommandExecutor {
 										plugin.sendTitle(enviou, "§6Teleportando", "§fem 1 segundo!");
 									}
 									cool--;
-								} else
-								Bukkit.getScheduler().cancelTask(420);
+								} else {
+									Bukkit.getScheduler().cancelTask(420);
+								}
 							}
 						}, 20L, 20L*3);
 						
@@ -138,11 +140,11 @@ public class Commands implements CommandExecutor {
 				               
 						}.runTaskTimerAsynchronously(plugin, 5L, 10L);
 						
-						} else {
+						/*} else {
 							enviou.teleport(p.getLocation());
 							enviou.sendMessage("§eVocê foi teleportado para o jogador " + p.getName() + ".");
 							plugin.sendTitle(enviou, "§6Teleportado", "§fpara " + p.getName() + ".");
-						}
+						}*/
 					} else {
 						p.sendMessage("§cVocê não tem pedidos recentes!");
 					}
@@ -156,11 +158,11 @@ public class Commands implements CommandExecutor {
 		
 		if(cmd.getName().equalsIgnoreCase("tpnegar")) {
 			if(args.length == 1) {
-				Player enviou = Bukkit.getPlayerExact(args[0]);
+				Player enviou = Bukkit.getPlayer(args[0]);
 				if(enviou != null) {
-					if(plugin.teleporte_pendente.contains(p.getName()) && plugin.teleporte_expirar.contains(p.getName())) {
-						plugin.teleporte_expirar.remove(p.getName());
-						plugin.teleporte_pendente.remove(p.getName());
+					if(plugin.teleporte_pendente.get(enviou.getName()).equals(p.getName()) && plugin.teleporte_expirar.containsValue(p.getName())) {
+						plugin.teleporte_expirar.remove(enviou.getName());
+						plugin.teleporte_pendente.remove(enviou.getName());
 						p.sendMessage("§cVocê negou o teleporte do jogador " + enviou.getName() + "!");
 						enviou.sendMessage("§cO jogador " + p.getName() + " negou o seu pedido de teleporte!");
 					} else {
@@ -187,6 +189,24 @@ public class Commands implements CommandExecutor {
 				return true;
 			}
 		}
+		
+		if(cmd.getName().equalsIgnoreCase("tpcancelar")) {
+			if(plugin.teleportando.contains(p.getName())
+					|| plugin.teleporte_pendente.containsKey(p.getName())) {
+				if(plugin.teleportando.contains(p.getName())) 
+					plugin.teleportando.remove(p.getName());
+				if(plugin.teleporte_pendente.containsKey(p.getName())) {
+					plugin.teleporte_pendente.remove(p.getName());
+					plugin.teleporte_expirar.remove(p.getName());
+				}
+				p.sendMessage("§cVocê cancelou o seu teleporte.");
+				plugin.sendTitle(p, "§6Teleporte", "§fcancelado!");
+				return true;
+				} else {
+					p.sendMessage("§cVocê não tem pedidos de teleporte recentes.");
+					return true;
+				}
+		}			
 		
 		if(cmd.getName().equalsIgnoreCase("tpo")) {
 			if(p.hasPermission("mrtpa.staff")) {
@@ -215,7 +235,7 @@ public class Commands implements CommandExecutor {
 					Player target = Bukkit.getPlayerExact(args[0]);
 					if(target != null) {
 						p.sendMessage("§eTeleportando o jogador " + target.getName() + " para você.");
-						plugin.sendTitle(p, "§6Teleportando", "§f" + p.getName() + " para você.");
+						plugin.sendTitle(p, "§6Teleportando", "§f" + target.getName() + " para você.");
 						plugin.sendTitle(target, "§6Teleportado", "§fpara " + p.getName() + ".");
 						target.sendMessage("§eTeleportando-se para o jogador " + p.getName() + ".");
 						target.teleport(p.getLocation());
