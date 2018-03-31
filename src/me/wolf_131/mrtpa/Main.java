@@ -22,8 +22,8 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;;
 public class Main extends JavaPlugin{
 	
 	public HashMap<String, Long> cooldown = new HashMap<String, Long>();
-	public List<String> teleporte_pendente = new ArrayList<String>();
-	public List<String> teleporte_expirar = new ArrayList<String>();
+	public HashMap<String, String> teleporte_pendente = new HashMap<String, String>();
+	public HashMap<String, String> teleporte_expirar = new HashMap<String, String>();
 	public List<String> teleportando = new  ArrayList<String>();
 	public List<String> tptoggle = new  ArrayList<String>();
 	
@@ -46,6 +46,7 @@ public class Main extends JavaPlugin{
 		this.getCommand("tpnegar").setExecutor(new Commands(this));
 		this.getCommand("tptoggle").setExecutor(new Commands(this));
 		this.getCommand("tpaceitar").setExecutor(new Commands(this));
+		this.getCommand("tpcancelar").setExecutor(new Commands(this));
 		this.getCommand("tpo").setExecutor(new Commands(this));
 		this.getCommand("tpaqui").setExecutor(new Commands(this));
 	}
