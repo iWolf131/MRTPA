@@ -53,11 +53,11 @@ public class Main extends JavaPlugin{
 	
 	public void sendJSONMsg(Player p, String text, String JSON, String text2, String hoverEvent, String command) {
 		TextComponent msg = new TextComponent(text);
-		TextComponent msg2 = new TextComponent(JSON);
+		TextComponent msg_json = new TextComponent(JSON);
 		TextComponent msg3 = new TextComponent(text2);
 		msg2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hoverEvent).create()));
 		msg2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-		msg.addExtra(msg2);
+		msg.addExtra(msg_json);
 		msg.addExtra(msg3);
 		p.spigot().sendMessage(msg);
 	}
