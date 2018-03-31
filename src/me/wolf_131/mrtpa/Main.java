@@ -62,8 +62,8 @@ public class Main extends JavaPlugin{
 	}
 	
 	public void sendTitle(Player p, String title, String subtitle) {
-		PacketPlayOutTitle titulo = new PacketPlayOutTitle(EnumTitleAction.TITLE, ChatSerializer.a("{\"text\":" + "\"" + title + "\"}"), 20, 20, 20);
-		PacketPlayOutTitle subtitulo = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, ChatSerializer.a("{\"text\":" + "\"" + subtitle + "\"}"), 20, 20, 20);
+		PacketPlayOutTitle titulo = new PacketPlayOutTitle(EnumTitleAction.TITLE, ChatSerializer.a("{\"text\":" + "\"" + title + "\"}"), 5, 5, 5);
+		PacketPlayOutTitle subtitulo = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, ChatSerializer.a("{\"text\":" + "\"" + subtitle + "\"}"), 5, 5, 5);
 		((CraftPlayer) p).getHandle().playerConnection.sendPacket(titulo);
 		((CraftPlayer) p).getHandle().playerConnection.sendPacket(subtitulo);
 	}
@@ -73,10 +73,17 @@ public class Main extends JavaPlugin{
         ((CraftPlayer) p).getHandle().playerConnection.sendPacket(action);
     }
 	
-	public void msgCooldown(Player p) {
-		Long segundos = ((cooldown.get(p.getName())/1000) + 15) - (System.currentTimeMillis()/1000);
-		if (segundos > 0)
-			p.sendMessage("§cVocê precisa de esperar mais " + Long.toString(segundos) + " segundos!");
-	}
+    public boolean msgCooldown(Player p) {
+    	  if(!cooldown.containsKey(p.getName())) 
+    	    return false;
+    	  
+    	  Long segundos = (cooldown.get(p.getName())/1000) - (System.currentTimeMillis()/1000);
+    	  if (segundos > 0) {
+    	    p.sendMessage("§cVocê precisa de esperar mais " + Long.toString(segundos) + " segundos!");
+    	    return true;
+    	  } else
+    		  cooldown.remove(p.getName());    
+    	  return false;
+    	}
 	
 }
