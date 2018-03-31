@@ -47,7 +47,7 @@ public class Commands implements CommandExecutor {
 						plugin.sendJSONMsg(target, "§eClique ", "§a§lAQUI", " §epara aceitar.", "§aClique aqui para aceitar!" , "/tpaceitar " + p.getName());
 						plugin.sendJSONMsg(target, "§eClique ", "§c§lAQUI", " §epara negar.", "§cClique aqui para negar!" , "/tpnegar " + p.getName());
 						
-						//if(!p.hasPermission("mrtpa.cooldown"))
+						if(!p.hasPermission("mrtpa.cooldown"))
 							plugin.cooldown.put(p.getName(), System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15));
 						
 						plugin.teleporte_pendente.put(p.getName(), target.getName());
@@ -82,7 +82,7 @@ public class Commands implements CommandExecutor {
 						plugin.teleporte_expirar.remove(p.getName());
 						plugin.teleportando.add(enviou.getName());
 						plugin.teleporte_pendente.remove(p.getName());
-						//if(!enviou.hasPermission("mrtpa.bypass")) {
+						if(!enviou.hasPermission("mrtpa.bypass")) {
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 							@Override
 							public void run() {
@@ -140,11 +140,11 @@ public class Commands implements CommandExecutor {
 				               
 						}.runTaskTimerAsynchronously(plugin, 5L, 10L);
 						
-						/*} else {
+						} else {
 							enviou.teleport(p.getLocation());
 							enviou.sendMessage("§eVocê foi teleportado para o jogador " + p.getName() + ".");
 							plugin.sendTitle(enviou, "§6Teleportado", "§fpara " + p.getName() + ".");
-						}*/
+						}
 					} else {
 						p.sendMessage("§cVocê não tem pedidos recentes!");
 					}
