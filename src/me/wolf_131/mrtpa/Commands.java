@@ -62,13 +62,6 @@ public class Commands implements CommandExecutor {
 								} 
 							}
 						}, 20L*30);
-						
-				        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				        	public void run() {
-				        		if(plugin.cooldown.containsKey(p.getName()))
-				        			plugin.cooldown.remove(p.getName());
-				        	}
-				        }, (long) (15 * 20L));
 						return true;
 					}
 				} else {
