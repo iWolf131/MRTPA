@@ -13,11 +13,12 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onTeleportMove(PlayerMoveEvent e) {
-		if(e.getFrom().getX() != e.getTo().getX()
-			|| e.getFrom().getZ() != e.getTo().getZ()) 
-		if(plugin.teleportando.contains(e.getPlayer().getName())) { 
-			e.getPlayer().sendMessage("§cVocê se moveu em teleporte, o teleporte foi cancelado!");
+		if(plugin.teleportando.contains(e.getPlayer().getName())) 
+		if(e.getFrom().getBlockX() != e.getTo().getBlockX()
+			|| e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
+			e.getPlayer().sendMessage("Â§cVocÃª se moveu em teleporte, o teleporte foi cancelado!");
 			plugin.teleportando.remove(e.getPlayer().getName());
 		}
 	}
 }
+
