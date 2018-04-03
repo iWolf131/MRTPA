@@ -3,6 +3,8 @@ package me.wolf_131.mrtpa;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -49,13 +51,13 @@ public class Commands implements CommandExecutor {
 						
 						if(!p.hasPermission("mrtpa.cooldown"))
 							plugin.cooldown.put(p.getName(), System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15));
-						
+						p.sendMessage("a");
 						plugin.teleporte_pendente.put(p.getName(), target.getName());
 						plugin.teleporte_expirar.put(p.getName(), target.getName());
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 							@Override
 							public void run() {
-								if(!plugin.teleporte_expirar.isEmpty()) {
+								if(plugin.teleporte_expirar.containsValue(target.getName())) {
 									p.sendMessage("§cO seu pedido de teleporte expirou.");
 									target.sendMessage("§cO pedido de teleporte do jogador " + p.getName() + " expirou.");
 									plugin.teleporte_expirar.remove(target.getName());
@@ -88,14 +90,17 @@ public class Commands implements CommandExecutor {
 				}
 				if(enviou != null) {
 					if(plugin.teleporte_pendente.containsValue(p.getName()) && plugin.teleporte_expirar.containsValue(p.getName())) {
-						plugin.teleporte_expirar.remove(p.getName());
+						Location loc = enviou.getLocation();
+						loc.setY(enviou.getLocation().getY() + 1);
+						plugin.teleporte_expirar.remove(enviou.getName());
 						plugin.teleportando.add(enviou.getName());
-						plugin.teleporte_pendente.remove(p.getName());
+						plugin.teleporte_pendente.remove(enviou.getName());
 						if(!enviou.hasPermission("mrtpa.bypass")) {
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 							@Override
 							public void run() {
 								if(plugin.teleportando.contains(enviou.getName())) {
+									enviou.getWorld().playEffect(loc, Effect.PORTAL, 50);
 									enviou.teleport(p.getLocation());
 									enviou.sendMessage("§eVocê foi teleportado para o jogador " + p.getName() + ".");
 									plugin.sendTitle(enviou, "§6Teleportado", "§fpara " + p.getName() + ".");
@@ -152,6 +157,7 @@ public class Commands implements CommandExecutor {
 							plugin.teleportando.remove(enviou.getName());
 							enviou.sendMessage("§eVocê foi teleportado para o jogador " + p.getName() + ".");
 							plugin.sendTitle(enviou, "§6Teleportado", "§fpara " + p.getName() + ".");
+							enviou.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 1000);
 						}
 					} else {
 						p.sendMessage("§cVocê não tem pedidos recentes!");
