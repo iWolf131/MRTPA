@@ -51,7 +51,6 @@ public class Commands implements CommandExecutor {
 						
 						if(!p.hasPermission("mrtpa.cooldown"))
 							plugin.cooldown.put(p.getName(), System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15));
-						p.sendMessage("a");
 						plugin.teleporte_pendente.put(p.getName(), target.getName());
 						plugin.teleporte_expirar.put(p.getName(), target.getName());
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
@@ -191,7 +190,6 @@ public class Commands implements CommandExecutor {
 						p.sendMessage("§cVocê não tem pedidos recentes!");
 					}
 				} else {
-					p.sendMessage("§cO jogador " + args[0] + " não está online!");
 					return true;
 				}
 			} else
