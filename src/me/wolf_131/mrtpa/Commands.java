@@ -18,14 +18,14 @@ public class Commands implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if(!(sender instanceof Player)) {
-			System.out.println("Apenas jogadores podem executar esse comando!");
-			return true;
-		}
 		
 		Player p = (Player) sender;
 		
 		if(cmd.getName().equalsIgnoreCase("tpa")) {
+			if(!(sender instanceof Player)) {
+				System.out.println("Apenas jogadores podem executar esse comando!");
+				return true;
+			}
 			if(args.length == 1) {
 				Player target = Bukkit.getPlayerExact(args[0]);
 				if(target != null) {
@@ -62,6 +62,7 @@ public class Commands implements CommandExecutor {
 								} 
 							}
 						}, 20L*30);
+						
 						return true;
 					}
 				} else {
@@ -75,8 +76,16 @@ public class Commands implements CommandExecutor {
 		}
 		
 		if(cmd.getName().equalsIgnoreCase("tpaceitar")) {
+			if(!(sender instanceof Player)) {
+				System.out.println("Apenas jogadores podem executar esse comando!");
+				return true;
+			}
 			if(args.length == 1) {
 				Player enviou = Bukkit.getPlayerExact(args[0]);
+				if(p == enviou) {
+					p.sendMessage("§cVocê não pode aceitar pedidos de teleporte de si mesmo!");
+					return true;
+				}
 				if(enviou != null) {
 					if(plugin.teleporte_pendente.containsValue(p.getName()) && plugin.teleporte_expirar.containsValue(p.getName())) {
 						plugin.teleporte_expirar.remove(p.getName());
@@ -92,8 +101,7 @@ public class Commands implements CommandExecutor {
 									plugin.sendTitle(enviou, "§6Teleportado", "§fpara " + p.getName() + ".");
 									plugin.sendActionBar(enviou, "§a▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉");
 									plugin.teleportando.remove(enviou.getName());
-								} else
-									p.sendMessage("§cO teleporte foi cancelado!");
+								}
 							}
 						}, (long)(20*10)); 
 						Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -115,7 +123,6 @@ public class Commands implements CommandExecutor {
 								}
 							}
 						}, 20L, 20L*3);
-						
 						new BukkitRunnable(){
 							int vermelho = 20;
 							int verde = 0;
@@ -139,9 +146,10 @@ public class Commands implements CommandExecutor {
 							}
 				               
 						}.runTaskTimerAsynchronously(plugin, 5L, 10L);
-						
+
 						} else {
 							enviou.teleport(p.getLocation());
+							plugin.teleportando.remove(enviou.getName());
 							enviou.sendMessage("§eVocê foi teleportado para o jogador " + p.getName() + ".");
 							plugin.sendTitle(enviou, "§6Teleportado", "§fpara " + p.getName() + ".");
 						}
@@ -157,8 +165,16 @@ public class Commands implements CommandExecutor {
 		}
 		
 		if(cmd.getName().equalsIgnoreCase("tpnegar")) {
+			if(!(sender instanceof Player)) {
+				System.out.println("Apenas jogadores podem executar esse comando!");
+				return true;
+			}
 			if(args.length == 1) {
 				Player enviou = Bukkit.getPlayer(args[0]);
+				if(p == enviou) {
+					p.sendMessage("§cVocê não pode negar pedidos de teleporte de si mesmo!");
+					return true;
+				}
 				if(enviou != null) {
 					if(plugin.teleporte_pendente.get(enviou.getName()).equals(p.getName()) && plugin.teleporte_expirar.containsValue(p.getName())) {
 						plugin.teleporte_expirar.remove(enviou.getName());
@@ -191,6 +207,10 @@ public class Commands implements CommandExecutor {
 		}
 		
 		if(cmd.getName().equalsIgnoreCase("tpcancelar")) {
+			if(!(sender instanceof Player)) {
+				System.out.println("Apenas jogadores podem executar esse comando!");
+				return true;
+			}
 			if(plugin.teleportando.contains(p.getName())
 					|| plugin.teleporte_pendente.containsKey(p.getName())) {
 				if(plugin.teleportando.contains(p.getName())) 
@@ -209,10 +229,18 @@ public class Commands implements CommandExecutor {
 		}			
 		
 		if(cmd.getName().equalsIgnoreCase("tpo")) {
+			if(!(sender instanceof Player)) {
+				System.out.println("Apenas jogadores podem executar esse comando!");
+				return true;
+			}
 			if(p.hasPermission("mrtpa.staff")) {
 				if(args.length == 1) {
 					Player target = Bukkit.getPlayerExact(args[0]);
 					if(target != null) {
+						if(p == target) {
+							p.sendMessage("§cVocê não pode enviar pedidos de teleporte para si mesmo!");
+							return true;
+						}
 						p.sendMessage("§eTeleportando-se para o jogador " + target.getName() + ".");
 						plugin.sendTitle(p, "§6Teleportado", "§fpara " + target.getName() + ".");
 						p.teleport(target.getLocation());
@@ -230,10 +258,18 @@ public class Commands implements CommandExecutor {
 		}
 		
 		if(cmd.getName().equalsIgnoreCase("tpaqui")) {
+			if(!(sender instanceof Player)) {
+				System.out.println("Apenas jogadores podem executar esse comando!");
+				return true;
+			}
 			if(p.hasPermission("mrtpa.staff")) {
 				if(args.length == 1) {
 					Player target = Bukkit.getPlayerExact(args[0]);
 					if(target != null) {
+						if(p == target) {
+							p.sendMessage("§cVocê não pode enviar pedidos de teleporte para si mesmo!");
+							return true;
+						}
 						p.sendMessage("§eTeleportando o jogador " + target.getName() + " para você.");
 						plugin.sendTitle(p, "§6Teleportando", "§f" + target.getName() + " para você.");
 						plugin.sendTitle(target, "§6Teleportado", "§fpara " + p.getName() + ".");
