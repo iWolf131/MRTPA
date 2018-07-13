@@ -1,6 +1,6 @@
 name: MRTPA
 main: me.wolf_131.mrtpa.Main
-version: 1.1.2
+version: 2.0.0
 author: Wolf_131
 commands:
   tpa:
@@ -11,7 +11,10 @@ commands:
     aliases: [tpdeny]
   tptoggle:
   tpo:
+    aliases: [tpoutro]
   tpaqui:
     aliases: [tphere]
   tpcancelar:
     aliases: [tpcancel]
+  tpaleatorio:
+    aliases: [randomtp]
