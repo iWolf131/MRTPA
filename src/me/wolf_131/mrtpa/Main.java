@@ -9,6 +9,11 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.wolf_131.mrtpa.commands.OtherTpaCommands;
+import me.wolf_131.mrtpa.commands.StaffCommands;
+import me.wolf_131.mrtpa.commands.TpAceitarCommand;
+import me.wolf_131.mrtpa.commands.TpNegarCommand;
+import me.wolf_131.mrtpa.commands.TpaCommand;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -19,15 +24,24 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;;
 
-public class Main extends JavaPlugin{
+public class Main extends JavaPlugin {
 	
-	public HashMap<String, Long> cooldown = new HashMap<String, Long>();
-	public HashMap<String, String> teleporte_pendente = new HashMap<String, String>();
-	public HashMap<String, String> teleporte_expirar = new HashMap<String, String>();
-	public List<String> teleportando = new  ArrayList<String>();
-	public List<String> tptoggle = new  ArrayList<String>();
+	public HashMap<String, Long> cooldown;
+	public HashMap<String, String> teleporte_pendente;
+	public HashMap<String, String> teleporte_expirar;
+	public List<String> teleportando;
+	public List<String> tptoggle;
+	
+	public static Main getPlugin() {
+		return Main.getPlugin(Main.class);
+	}
 	
 	public void onEnable() {
+		cooldown = new HashMap<String, Long>();
+		teleporte_pendente = new HashMap<String, String>();
+		teleporte_expirar = new HashMap<String, String>();
+		teleportando = new ArrayList<String>();
+		tptoggle = new ArrayList<String>();
 		registerCommands();
 		Bukkit.getPluginManager().registerEvents(new Events(this), this);
 	}
@@ -42,22 +56,23 @@ public class Main extends JavaPlugin{
 	}
 	
 	public void registerCommands() {
-		this.getCommand("tpa").setExecutor(new Commands(this));
-		this.getCommand("tpnegar").setExecutor(new Commands(this));
-		this.getCommand("tptoggle").setExecutor(new Commands(this));
-		this.getCommand("tpaceitar").setExecutor(new Commands(this));
-		this.getCommand("tpcancelar").setExecutor(new Commands(this));
-		this.getCommand("tpo").setExecutor(new Commands(this));
-		this.getCommand("tpaqui").setExecutor(new Commands(this));
+		getCommand("tpa").setExecutor(new TpaCommand());
+		getCommand("tpnegar").setExecutor(new TpNegarCommand());
+		getCommand("tptoggle").setExecutor(new OtherTpaCommands());
+		getCommand("tpaceitar").setExecutor(new TpAceitarCommand());
+		getCommand("tpcancelar").setExecutor(new OtherTpaCommands());
+		getCommand("tpo").setExecutor(new StaffCommands());
+		getCommand("tpaqui").setExecutor(new StaffCommands());
+		getCommand("tpaleatorio").setExecutor(new StaffCommands());
 	}
 	
 	public void sendJSONMsg(Player p, String text, String JSON, String text2, String hoverEvent, String command) {
 		TextComponent msg = new TextComponent(text);
-		TextComponent msg_json = new TextComponent(JSON);
+		TextComponent msg2 = new TextComponent(JSON);
 		TextComponent msg3 = new TextComponent(text2);
 		msg2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hoverEvent).create()));
 		msg2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-		msg.addExtra(msg_json);
+		msg.addExtra(msg2);
 		msg.addExtra(msg3);
 		p.spigot().sendMessage(msg);
 	}
@@ -85,6 +100,6 @@ public class Main extends JavaPlugin{
     	  } else
     		  cooldown.remove(p.getName());    
     	  return false;
-    	}
+    }
 	
 }
