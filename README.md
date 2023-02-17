@@ -1,4 +1,4 @@
 # MRTPA
 
-Este é um plugin de teleporte. Utiliza JSON, ActionBar e Titulos, sem dependências algumas! :D 
-Se quiser falar comigo, chame no discord: Wolf_131#0905.
+Este é um plugin de teleporte no Minecraft. Utiliza JSON, ActionBar e Titulos, sem quaisquer dependências! 
+Tópico exemplificativo: https://gamersboard.com.br/topic/56240-open-source-mrtpa-v2-o-seu-plugin-de-tpa-quase-perfeito/
